@@ -90,7 +90,7 @@ def main(args):
                     else:
                         for i, img in enumerate(reader):
                             if img.ndim<2:
-                                print('Unable to align "%s[%d]", ndim=%d' % (image_path, i, img.ndim))
+                                print('Unable to align "%s[%05d]", ndim=%d' % (image_path, i, img.ndim))
                                 text_file.write('%s\n' % (output_filename))
                                 continue
                             if img.ndim == 2:
@@ -104,7 +104,7 @@ def main(args):
                                 det_arr = []
                                 img_size = np.asarray(img.shape)[0:2]
                                 if nrof_faces>1:
-                                    print('Too many faces "%s[%d]"' % (image_path, i))
+                                    print('Too many faces "%s[%05d]"' % (image_path, i))
                                     continue
                                 #if nrof_faces>1:
                                 #    if args.detect_multiple_faces:
@@ -135,13 +135,13 @@ def main(args):
                                     nrof_successfully_aligned += 1
                                     filename_base, file_extension = os.path.splitext(output_filename)
                                     if args.detect_multiple_faces:
-                                        output_filename_n = "{}_{}_{}{}".format(filename_base, i, j, file_extension)
+                                        output_filename_n = "{}_{:05d}_{:02d}{}".format(filename_base, i, j, file_extension)
                                     else:
-                                        output_filename_n = "{}_{}{}".format(filename_base, i, file_extension)
+                                        output_filename_n = "{}_{:05d}{}".format(filename_base, i, file_extension)
                                     imageio.imwrite(output_filename_n, scaled.astype(np.uint8))
                                     text_file.write('%s %d %d %d %d\n' % (output_filename_n, bb[0], bb[1], bb[2], bb[3]))
                             else:
-                                print('Unable to align "%s[%d]"' % (image_path, i))
+                                print('Unable to align "%s[%05d]"' % (image_path, i))
                                 text_file.write('%s\n' % (output_filename))
                             
     print('Total number of images: %d' % nrof_images_total)
