@@ -82,7 +82,7 @@ def main(args):
 
 	with tf.Graph().as_default():
 
-		with tf.Session() as sess:
+		with tf.compat.v1.Session() as sess:
 
 			# create output directory if it doesn't exist
 			output_dir = os.path.expanduser(args.output_dir)

@@ -30,7 +30,7 @@ def run_train():
     tf.set_random_seed(666)
 
     # Placeholder for input images
-    images_placeholder = tf.placeholder(tf.float32, shape=(FLAGS.batch_size, FLAGS.image_size, FLAGS.image_size, 3), name='input')
+    images_placeholder = tf.compat.v1.placeholder(tf.float32, shape=(FLAGS.batch_size, FLAGS.image_size, FLAGS.image_size, 3), name='input')
     
     # Build the inference graph
     embeddings = inference_conv_test(images_placeholder)
@@ -62,7 +62,7 @@ def run_train():
     init = tf.global_variables_initializer()
     
     # Launch the graph.
-    sess = tf.Session()
+    sess = tf.compat.v1.Session()
     sess.run(init)
 
     # Set the numpy seed

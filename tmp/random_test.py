@@ -8,7 +8,7 @@ with tf.Graph().as_default():
 
 
   # Placeholder for input images
-  input_placeholder = tf.placeholder(tf.float32, shape=(9, 7), name='input')
+  input_placeholder = tf.compat.v1.placeholder(tf.float32, shape=(9, 7), name='input')
   
   # Split example embeddings into anchor, positive and negative
   #anchor, positive, negative = tf.split(0, 3, input)
@@ -21,7 +21,7 @@ with tf.Graph().as_default():
   init = tf.global_variables_initializer()
 
   # Start running operations on the Graph.
-  sess = tf.Session(config=tf.ConfigProto(log_device_placement=False))
+  sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=False))
   sess.run(init)
   
   with sess.as_default():
@@ -87,8 +87,8 @@ with tf.Graph().as_default():
     #plt.imshow(np.multiply(apn[idx*3+2,:,:,:],1/256))
 
 
-#input_image = tf.placeholder(tf.float32, name='input_image')
-#phase_train = tf.placeholder(tf.bool, name='phase_train')
+#input_image = tf.compat.v1.placeholder(tf.float32, name='input_image')
+#phase_train = tf.compat.v1.placeholder(tf.bool, name='phase_train')
 
 #n_in, n_out = 3, 16
 #ksize = 3
@@ -104,7 +104,7 @@ with tf.Graph().as_default():
 #init = tf.global_variables_initializer()
 
 ## Start running operations on the Graph.
-#sess = tf.Session()
+#sess = tf.compat.v1.Session()
 #sess.run(init)
 
 #path = '/home/david/datasets/fs_aligned/Zooey_Deschanel/'

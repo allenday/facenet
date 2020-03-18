@@ -97,7 +97,7 @@ class Identifier:
 
 class Encoder:
     def __init__(self):
-        self.sess = tf.Session()
+        self.sess = tf.compat.v1.Session()
         with self.sess.as_default():
             facenet.load_model(facenet_model_checkpoint)
 
@@ -127,8 +127,8 @@ class Detection:
 
     def _setup_mtcnn(self):
         with tf.Graph().as_default():
-            gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
-            sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
+            gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=gpu_memory_fraction)
+            sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options, log_device_placement=False))
             with sess.as_default():
                 return align.detect_face.create_mtcnn(sess, None)
 

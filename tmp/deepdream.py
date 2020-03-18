@@ -36,7 +36,7 @@ def main():
     with tf.gfile.FastGFile(os.path.join(data_dir, model_fn), 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
-    t_input = tf.placeholder(np.float32, name='input') # define the input tensor
+    t_input = tf.compat.v1.placeholder(np.float32, name='input') # define the input tensor
     imagenet_mean = 117.0
     t_preprocessed = tf.expand_dims(t_input-imagenet_mean, 0)
     tf.import_graph_def(graph_def, {'input':t_preprocessed})
@@ -102,7 +102,7 @@ def main():
         '''Helper that transforms TF-graph generating function into a regular one.
         See "resize" function below.
         '''
-        placeholders = list(map(tf.placeholder, argtypes))
+        placeholders = list(map(tf.compat.v1.placeholder, argtypes))
         def wrap(f):
             out = f(*placeholders)
             def wrapper(*args, **kw):

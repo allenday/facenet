@@ -152,11 +152,11 @@ def main(argv=None):  # pylint: disable=unused-argument
     # This is where training samples and labels are fed to the graph.
     # These placeholder nodes will be fed a batch of training data at each
     # training step using the {feed_dict} argument to the Run() call below.
-    train_data_node = tf.placeholder(
+    train_data_node = tf.compat.v1.placeholder(
         data_type(),
         shape=(BATCH_SIZE, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS))
-    train_labels_node = tf.placeholder(tf.int64, shape=(BATCH_SIZE,))
-    eval_data = tf.placeholder(
+    train_labels_node = tf.compat.v1.placeholder(tf.int64, shape=(BATCH_SIZE,))
+    eval_data = tf.compat.v1.placeholder(
         data_type(),
         shape=(EVAL_BATCH_SIZE, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS))
 
@@ -205,7 +205,7 @@ def main(argv=None):  # pylint: disable=unused-argument
         Ref: http://stackoverflow.com/questions/33949786/how-could-i-use-batch-normalization-in-tensorflow/33950177
         """
         name = 'batch_norm'
-        with tf.variable_scope(name):
+        with tf.compat.v1.variable_scope(name):
             phase_train = tf.convert_to_tensor(phase_train, dtype=tf.bool)
             n_out = int(x.get_shape()[-1])
             beta = tf.Variable(tf.constant(0.0, shape=[n_out], dtype=x.dtype),
@@ -353,7 +353,7 @@ def main(argv=None):  # pylint: disable=unused-argument
 
     # Create a local session to run the training.
     start_time = time.time()
-    with tf.Session() as sess:
+    with tf.compat.v1.Session() as sess:
         # Run all the initializers to prepare the trainable parameters.
         tf.global_variables_initializer().run() #pylint: disable=no-member
         print('Initialized!')

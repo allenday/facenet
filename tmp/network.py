@@ -33,9 +33,9 @@ from tensorflow.python.ops import control_flow_ops
 
 
 def conv(inpOp, nIn, nOut, kH, kW, dH, dW, padType, name, phase_train=True, use_batch_norm=True, weight_decay=0.0):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         l2_regularizer = lambda t: l2_loss(t, weight=weight_decay)
-        kernel = tf.get_variable("weights", [kH, kW, nIn, nOut],
+        kernel = tf.compat.v1.get_variable("weights", [kH, kW, nIn, nOut],
             initializer=tf.truncated_normal_initializer(stddev=1e-1),
             regularizer=l2_regularizer, dtype=inpOp.dtype)
         cnv = tf.nn.conv2d(inpOp, kernel, [1, dH, dW, 1], padding=padType)
@@ -44,18 +44,18 @@ def conv(inpOp, nIn, nOut, kH, kW, dH, dW, padType, name, phase_train=True, use_
             conv_bn = batch_norm(cnv, phase_train)
         else:
             conv_bn = cnv
-        biases = tf.get_variable("biases", [nOut], initializer=tf.constant_initializer(), dtype=inpOp.dtype)
+        biases = tf.compat.v1.get_variable("biases", [nOut], initializer=tf.constant_initializer(), dtype=inpOp.dtype)
         bias = tf.nn.bias_add(conv_bn, biases)
         conv1 = tf.nn.relu(bias)
     return conv1
 
 def affine(inpOp, nIn, nOut, name, weight_decay=0.0):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         l2_regularizer = lambda t: l2_loss(t, weight=weight_decay)
-        weights = tf.get_variable("weights", [nIn, nOut],
+        weights = tf.compat.v1.get_variable("weights", [nIn, nOut],
             initializer=tf.truncated_normal_initializer(stddev=1e-1),
             regularizer=l2_regularizer, dtype=inpOp.dtype)
-        biases = tf.get_variable("biases", [nOut], initializer=tf.constant_initializer(), dtype=inpOp.dtype)
+        biases = tf.compat.v1.get_variable("biases", [nOut], initializer=tf.constant_initializer(), dtype=inpOp.dtype)
         affine1 = tf.nn.relu_layer(inpOp, weights, biases)
     return affine1
 
@@ -76,7 +76,7 @@ def l2_loss(tensor, weight=1.0, scope=None):
     return loss
 
 def lppool(inpOp, pnorm, kH, kW, dH, dW, padding, name):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         if pnorm == 2:
             pwr = tf.square(inpOp)
         else:
@@ -96,7 +96,7 @@ def lppool(inpOp, pnorm, kH, kW, dH, dW, padding, name):
     return out
 
 def mpool(inpOp, kH, kW, dH, dW, padding, name):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         maxpool = tf.nn.max_pool(inpOp,
                        ksize=[1, kH, kW, 1],
                        strides=[1, dH, dW, 1],
@@ -104,7 +104,7 @@ def mpool(inpOp, kH, kW, dH, dW, padding, name):
     return maxpool
 
 def apool(inpOp, kH, kW, dH, dW, padding, name):
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         avgpool = tf.nn.avg_pool(inpOp,
                               ksize=[1, kH, kW, 1],
                               strides=[1, dH, dW, 1],
@@ -125,7 +125,7 @@ def batch_norm(x, phase_train):
     Ref: http://stackoverflow.com/questions/33949786/how-could-i-use-batch-normalization-in-tensorflow/33950177
     """
     name = 'batch_norm'
-    with tf.variable_scope(name):
+    with tf.compat.v1.variable_scope(name):
         phase_train = tf.convert_to_tensor(phase_train, dtype=tf.bool)
         n_out = int(x.get_shape()[3])
         beta = tf.Variable(tf.constant(0.0, shape=[n_out], dtype=x.dtype),
@@ -164,25 +164,25 @@ def inception(inp, inSize, ks, o1s, o2s1, o2s2, o3s1, o3s2, o4s1, o4s2, o4s3, po
     
     net = []
     
-    with tf.variable_scope(name):
-        with tf.variable_scope('branch1_1x1'):
+    with tf.compat.v1.variable_scope(name):
+        with tf.compat.v1.variable_scope('branch1_1x1'):
             if o1s>0:
                 conv1 = conv(inp, inSize, o1s, 1, 1, 1, 1, 'SAME', 'conv1x1', phase_train=phase_train, use_batch_norm=use_batch_norm, weight_decay=weight_decay)
                 net.append(conv1)
       
-        with tf.variable_scope('branch2_3x3'):
+        with tf.compat.v1.variable_scope('branch2_3x3'):
             if o2s1>0:
                 conv3a = conv(inp, inSize, o2s1, 1, 1, 1, 1, 'SAME', 'conv1x1', phase_train=phase_train, use_batch_norm=use_batch_norm, weight_decay=weight_decay)
                 conv3 = conv(conv3a, o2s1, o2s2, 3, 3, ks, ks, 'SAME', 'conv3x3', phase_train=phase_train, use_batch_norm=use_batch_norm, weight_decay=weight_decay)
                 net.append(conv3)
       
-        with tf.variable_scope('branch3_5x5'):
+        with tf.compat.v1.variable_scope('branch3_5x5'):
             if o3s1>0:
                 conv5a = conv(inp, inSize, o3s1, 1, 1, 1, 1, 'SAME', 'conv1x1', phase_train=phase_train, use_batch_norm=use_batch_norm, weight_decay=weight_decay)
                 conv5 = conv(conv5a, o3s1, o3s2, 5, 5, ks, ks, 'SAME', 'conv5x5', phase_train=phase_train, use_batch_norm=use_batch_norm, weight_decay=weight_decay)
                 net.append(conv5)
       
-        with tf.variable_scope('branch4_pool'):
+        with tf.compat.v1.variable_scope('branch4_pool'):
             if poolType=='MAX':
                 pool = mpool(inp, o4s1, o4s1, o4s3, o4s3, 'SAME', 'pool')
             elif poolType=='L2':

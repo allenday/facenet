@@ -47,7 +47,7 @@ def main(args):
     
     with tf.Graph().as_default():
 
-        with tf.Session() as sess:
+        with tf.compat.v1.Session() as sess:
     
             # Load the model
             print('Loading model "%s"' % args.model_file)
