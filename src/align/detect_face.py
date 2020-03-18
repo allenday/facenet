@@ -191,10 +191,10 @@ class Network(object):
                     dim *= int(d)
                 feed_in = tf.reshape(inp, [-1, dim])
             else:
-                feed_in, dim = (inp, input_shape[-1].value)
+                feed_in, dim = (inp, input_shape[-1])
             weights = self.make_var('weights', shape=[dim, num_out])
             biases = self.make_var('biases', [num_out])
-            op = tf.nn.relu_layer if relu else tf.nn.xw_plus_b
+            op = tf.nn.relu_layer if relu else tf.compat.v1.nn.xw_plus_b
             fc = op(feed_in, weights, biases, name=name)
             return fc
 
@@ -210,7 +210,7 @@ class Network(object):
         max_axis = tf.reduce_max(target, axis, keepdims=True)
         target_exp = tf.exp(target-max_axis)
         normalize = tf.reduce_sum(target_exp, axis, keepdims=True)
-        softmax = tf.compat.v1.div(target_exp, normalize, name)
+        softmax = tf.math.divide(target_exp, normalize, name)
         return softmax
     
 class PNet(Network):
